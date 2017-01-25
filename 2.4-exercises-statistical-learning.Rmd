@@ -4,7 +4,7 @@ author: "Kurt Schuepfer"
 date: "1/24/2017"
 output: html_document
 ---
-
+#Chapter 2: Statistical Learning Exercises
 ##Conceptual
 
 ###1.
@@ -246,7 +246,7 @@ sapply(auto.nums.sub, mean.sd.range)
 
 (e) Using the full data set, investigate the predictors graphically, using scatterplots or other tools of your choice. Create some plots highlighting the relationships among the predictors. Comment on your findings.
 
-```{r}
+```{r, echo=TRUE}
 auto %>% ggplot(aes(x = cylinders, y = mpg, group = cylinders)) + geom_boxplot(aes(fill=cylinders))
 
 auto %>% ggplot(aes(x = mpg, y = displacement)) + geom_point() + geom_smooth(method = "lm")
