@@ -1,0 +1,118 @@
+---
+title: "ch3-lab-linear-regression"
+author: "Kurt Schuepfer"
+date: "1/29/2017"
+output: html_document
+---
+#Chapter 3 Lab: Linear Regression Lab
+
+####3.6.1
+
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+####3.6.2 Simple Linear Regression
+```{r, echo = TRUE}
+attach(Boston)
+names(Boston)
+lm.fit <- lm(medv~lstat)
+summary(lm.fit)
+coefficients(lm.fit)
+confint(lm.fit)
+
+#can then use the regresion to predict unknown data apply confidence or prediction intervals 
+predict(lm.fit, data.frame(lstat = c(5, 10, 15)), interval = "confidence")
+predict(lm.fit, data.frame(lstat = c(5, 10, 15)), interval = "prediction")
+
+plot(lstat, medv)
+abline(lm.fit, lwd = 3, col = "red", pch = 1:20)
+par(mfrow = c(2,2))
+plot(lm.fit)
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit)) ##standardized residuals
+
+plot(hatvalues(lm.fit)) #leverage statistics for any value
+which.max(hatvalues(lm.fit))
+```
+
+####3.6.3 Multiple Linear Regression
+```{r}
+lm.fit <- lm(medv~lstat+age, data=Boston)
+summary(lm.fit)
+lm.fit <- lm(medv~., data = Boston)
+summary(lm.fit)
+summary(lm.fit)$r.sq
+summary(lm.fit)$sigma
+
+#VIF - variance inflation factor
+library(car)
+vif(lm.fit)
+
+##removing one predictor
+lm.fit1 <- lm(medv~.-age, data = Boston)
+summary(lm.fit1)
+lm.fit1 = update(lm.fit, ~.-age) #update function is an alternative
+```
+
+####3.6.4 Interaction Terms
+```{r}
+summary(lm(medv~lstat*age, data = Boston))
+```
+####3.6.5 Non-linear Transformations of the Predictors
+
+Must use I() function to fit quadratic terms or higher-order polynomials
+```{r}
+lm.fit <- lm(medv~lstat) #linear submodel
+lm.fit2 <- lm(medv~lstat + I(lstat^2))
+summary(lm.fit2)
+
+##Model with quadratic term is highly significant. Now compare to previous fit.
+anova(lm.fit, lm.fit2) #null is that models fit equally well
+par(mfrow=c(2,2))
+plot(lm.fit2)
+```
+
+Can use poly() function to fit highe-rorder polynomials
+```{r}
+lm.fit5 <- lm(medv~poly(lstat, 5))
+summary(lm.fit5)
+```
+
+Can also transform in other ways
+```{r}
+summary(lm(medv~log(rm), data = Boston))
+```
+
+####3.6.6 Qualitative Predictors
+```{r}
+attach(Carseats)
+names(Carseats)
+```
+
+R automatically generates dummy variables for factor variables
+
+```{r}
+lm.fit <- lm(Sales~.+Income:Advertising+Price:Age, data = Carseats)
+summary(lm.fit)
+```
+
+```{r}
+contrasts(ShelveLoc) #shows dummy coding schemes for variables
+?contrasts 
+```
+
+####3.6.7 Writing Functions
+
+```{r}
+LoadLibraries = function(){
+        library(ISLR)
+        library(MASS)
+        print("The libraries have been loaded.")
+}
+
+LoadLibraries()
+LoadLibraries
+```
+
